@@ -11,13 +11,12 @@ import matplotlib.pyplot as plt
 # Rede Neurais Recorrentes - Previsão da ação COCA34
 # Previsão com multiplas entradas e multiplas saidas
 
-#Conclusão, em comparação aos outros, o modelo não se saiu muito bem tendo multiplas saidas de previsão
 
 #Variaveis de controle
-batch_size = 5 # - Define batch de treinamento
-epochs = 100 # - Define epocas de treinamento
-timesteps = 90 # - Define a quantidade de dias anteriores que serão usados para treino e previsão
-dias = 15 # - Define quantos dias a frente serão previstos
+batch_size = 4 # - Define batch de treinamento
+epochs = 20 # - Define epocas de treinamento
+timesteps = 100 # - Define a quantidade de dias anteriores que serão usados para treino e previsão
+dias = 160 # - Define quantos dias a frente serão previstos
 
 def CarregaDados(caminho, mode):
     #Carregando e tratando base de dados
@@ -73,7 +72,7 @@ def CarregaDados(caminho, mode):
                 result = modelo.predict(x)
                 dados = np.vstack((dados, result))
             else:
-                dados[i] = modelo.predict(x)
+                dados[i, 0:4] = modelo.predict(x)
 
 
         previsores = np.asarray(previsores)
@@ -85,20 +84,20 @@ def CarregaDados(caminho, mode):
 def CriaRede():
     modelo = Sequential()
 
-    modelo.add(LSTM(units=120, return_sequences=True, input_shape=(timesteps, 4)))
-    modelo.add(Dropout(0.3))
+    modelo.add(LSTM(units=100, return_sequences=True, input_shape=(timesteps, 4)))
+    modelo.add(Dropout(0.4))
 
-    modelo.add(LSTM(units=120, return_sequences=True))
-    modelo.add(Dropout(0.3))
+    modelo.add(LSTM(units=80, return_sequences=True))
+    modelo.add(Dropout(0.4))
 
-    modelo.add(LSTM(units=120, return_sequences=True))
-    modelo.add(Dropout(0.3))
+    modelo.add(LSTM(units=80, return_sequences=True))
+    modelo.add(Dropout(0.4))
 
-    modelo.add(LSTM(units=120, return_sequences=True))
-    modelo.add(Dropout(0.3))
+    modelo.add(LSTM(units=80, return_sequences=True))
+    modelo.add(Dropout(0.4))
 
-    modelo.add(LSTM(units=120))
-    modelo.add(Dropout(0.3))
+    modelo.add(LSTM(units=80))
+    modelo.add(Dropout(0.4))
 
     modelo.add(Dense(units=4, activation='linear'))
 
@@ -133,9 +132,9 @@ def Treinamento():
     plt.legend(('Treinamento', 'Teste'))
     plt.show()
 
-def Previsao(caminho):
+def Previsao(caminho, mode):
     #Carregando dados e modelo ja treinado
-    previsores, preco_real = CarregaDados(caminho, 'previsao')
+    previsores, preco_real = CarregaDados(caminho, mode)
 
     modelo = load_model('Modelo.0.1')
 
@@ -155,5 +154,15 @@ def Previsao(caminho):
     plt.ylabel('R$')
     plt.show()
 
-Treinamento()
-Previsao('COCA34.SA_Previsao.csv')
+
+#Previsao(caminho do arquivo de dados no formato csv, modo de carregamento de dados)
+#Modo de carregamento de dados
+# - Treinamento : modelo ira carregar dados normaliza-los e estruturar dividindo em variaveis 'previsores' e 'preco_real' para comparação e analise
+# - Previsao : modelo ira carregar dados normaliza-los, estruturar com divisão de variaveis 'previsores' e 'preco_real', porém,
+# a variavel 'previsores' irá se autoalimentar com as previsões, permitindo prever o preço além dos dados ja conhecidos
+# Exemplo: se possuir dados dos ultimos 100 dias no modo treinamento só sera possivel prever o preço do dia 101. No modo
+# previsão é possivel prever além
+# o modo Treinamento performou muito bem, porém, o modo previsão performou muito mal, a previsão recursiva estabiliza os dados, sendo assim muito dificil
+# prever grandes avarias
+
+Previsao('COCA34.SA_Previsao.csv','treinamento')
