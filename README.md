@@ -7,7 +7,7 @@ Atributos previstos
 
 ### Periodo utilizado: Diário
 ### !!!Atenção: o modelo de séries temporais não é capaz de prever preços a mais que um periodo de tempo a frente. Em um caso onde é previsto dois periodos a frente é necessario utilizar a previsão anterior como entrada de dados, isso distorce os resultados.
-### Foram utilizados dados conhecidos para análise de resultado. Exemplo: a previsão 1 foi gerada com os 100 ultimos dias de uma base de dados conhecida, a previsão 2 foi gerada com os 100 ultimos dias em relação ao dia 1 de uma base de dados conhecida e assim por diante, prevendo sempre somente 1 dia a frente e gerendo um gráfico de previsões. 
+### Foram utilizados dados conhecidos para análise de resultado. Exemplo: a previsão 1 foi gerada com os 100 ultimos dias de uma base de dados conhecida, a previsão 2 foi gerada com os 100 ultimos dias em relação ao dia 1 de uma base de dados conhecida e assim por diante, prevendo sempre somente 1 dia a frente e gerando um gráfico de previsões. 
 ## Treinamento
 
 ![Screenshot_1](https://github.com/EvandroSanches/COCA34_RNN/assets/102191806/c2d49bec-243b-40c8-a0ac-57b3293c88eb)
