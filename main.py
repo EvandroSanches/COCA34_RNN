@@ -135,6 +135,10 @@ def Treinamento():
 def Previsao(caminho, mode):
     #Carregando dados e modelo ja treinado
     previsores, preco_real = CarregaDados(caminho, mode)
+    dados = pd.read_csv('COCA34.SA_Previsao.csv')
+
+    dados = dados.loc[dados.index >= 100]
+    dados['Date'] = pd.to_datetime(dados['Date'])
 
     modelo = load_model('Modelo.0.1')
 
@@ -145,14 +149,20 @@ def Previsao(caminho, mode):
     result = normalizador.inverse_transform(result)
     preco_real = normalizador.inverse_transform(preco_real)
 
-    #Relatório de previsão
-    plt.plot(result)
-    plt.plot(preco_real)
-    plt.title('Relação Previsão e Preço Real')
-    plt.legend(['Previsão Abertura','Previsão Alta', 'Previsão Baixa', 'Previsão Fechamento', 'Preço Real Abertura', 'Preço Real Alta', 'Preço Real Baixa', 'Preço Real Fechamento'])
-    plt.xlabel('Dias')
-    plt.ylabel('R$')
-    plt.show()
+    colunas = ['Abertura', 'Alta', 'Baixa', 'Fechamento']
+    result = pd.DataFrame(result, index=dados['Date'])
+    preco_real = pd.DataFrame(preco_real, index=dados['Date'])
+
+    for i in range(result.shape[1]):
+        #Relatório de previsão
+        plt.plot(result[i])
+        plt.plot(preco_real[i])
+        plt.title('Relação Previsão e Preço Real')
+        plt.legend(['Previsão '+colunas[i], 'Preço Real '+colunas[i]])
+        plt.xlabel('Data')
+        plt.ylabel('R$')
+        plt.show()
+
 
 
 #Previsao(caminho do arquivo de dados no formato csv, modo de carregamento de dados)
@@ -164,5 +174,6 @@ def Previsao(caminho, mode):
 # previsão é possivel prever além
 # o modo Treinamento performou muito bem, porém, o modo previsão performou muito mal, a previsão recursiva estabiliza os dados, sendo assim muito dificil
 # prever grandes avarias
+
 
 Previsao('COCA34.SA_Previsao.csv','treinamento')
